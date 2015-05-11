@@ -5,20 +5,23 @@
 var Chai = require('chai');
 var Lab = require('lab');
 var Mongoose = require('mongoose');
-var Server = require('../../lib/server');
+var Server = require('../../../lib/server');
 
 var lab = exports.lab = Lab.script();
 var describe = lab.experiment;
 var expect = Chai.expect;
 var it = lab.test;
 
-describe('authentication.js', function(){
-  it('should have a empty token', function(done){
-    server.plugins.authentication.authenticate.validateFunc({}, function(authErr, isAuth, credentials){
-      expect(authErr).to.not.be.ok;
-      expect(isAuth).to.not.be.ok;
-      expect(credentials).to.not.be.ok;
-      done();
+describe('GET /version', function(){
+  it('should return the version', function(done){
+    Server.init(function(err, server){
+      server.inject({method: 'GET', url: '/version', headers: {authorization: 'Bearer ' + server.app.environment.FIREBASE_TOKEN}}, function(response){
+        expect(err).to.not.be.ok;
+        expect(response.statusCode).to.equal(200);
+        server.stop(function(){
+          Mongoose.disconnect(done);
+        });
+      });
     });
   });
 });

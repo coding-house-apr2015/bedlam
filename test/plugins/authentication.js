@@ -34,8 +34,8 @@ describe('authentication.js', function(){
   });
 
   it('should have a empty token', function(done){
-    server.plugins.authentication.authenticate.validateFunc({}, function(authErr, isAuth, credentials){
-      expect(authErr).to.not.be.ok;
+    server.plugins.authentication.authenticate.validateFunc({}, function(err, isAuth, credentials){
+      expect(err).to.not.be.ok;
       expect(isAuth).to.not.be.ok;
       expect(credentials).to.not.be.ok;
       done();
@@ -44,8 +44,8 @@ describe('authentication.js', function(){
 
   it('should have a valid issued at token', function(done){
     var iat = (Date.now() / 1000) - 5;
-    server.plugins.authentication.authenticate.validateFunc({iat: iat, d: {uid: 'fake'}}, function(authErr, isAuth, credentials){
-      expect(authErr).to.not.be.ok;
+    server.plugins.authentication.authenticate.validateFunc({iat: iat, d: {uid: 'fake'}}, function(err, isAuth, credentials){
+      expect(err).to.not.be.ok;
       expect(isAuth).to.be.ok;
       expect(credentials).to.be.ok;
       done();
@@ -55,8 +55,8 @@ describe('authentication.js', function(){
   it('should cause a db error', function(done){
     var iat = (Date.now() / 1000) - 5;
     var stub = Sinon.stub(User, 'findOne').yields(new Error());
-    server.plugins.authentication.authenticate.validateFunc({iat: iat, d: {uid: 'fake'}}, function(authErr, isAuth, credentials){
-      expect(authErr).to.be.ok;
+    server.plugins.authentication.authenticate.validateFunc({iat: iat, d: {uid: 'fake'}}, function(err, isAuth, credentials){
+      expect(err).to.be.ok;
       expect(isAuth).to.not.be.ok;
       expect(credentials).to.not.be.ok;
       stub.restore();
@@ -67,8 +67,8 @@ describe('authentication.js', function(){
   it('should find a user', function(done){
     var iat = (Date.now() / 1000) - 5;
     var stub = Sinon.stub(User, 'findOne').yields(null, {_id: 3});
-    server.plugins.authentication.authenticate.validateFunc({iat: iat, d: {uid: 'fake'}}, function(authErr, isAuth, credentials){
-      expect(authErr).to.not.be.ok;
+    server.plugins.authentication.authenticate.validateFunc({iat: iat, d: {uid: 'fake'}}, function(err, isAuth, credentials){
+      expect(err).to.not.be.ok;
       expect(isAuth).to.be.ok;
       expect(credentials._id).to.equal(3);
       stub.restore();
